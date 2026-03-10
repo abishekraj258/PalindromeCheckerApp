@@ -1,0 +1,151 @@
+import java.util.*;
+
+public class PalindromeApplication {
+
+    public static void main(String[] args) {
+
+        displayTitle();
+
+        List<String> samples = Arrays.asList(
+                "madam",
+                "radar",
+                "level",
+                "noon",
+                "civic",
+                "refer",
+                "racecar"
+        );
+
+        System.out.println("\nTesting Different Palindrome Techniques\n");
+
+        for (String word : samples) {
+
+            System.out.println("Word : " + word);
+
+            System.out.println("Two Pointer       : " + PalindromeUtils.twoPointer(word));
+            System.out.println("Reverse Compare   : " + PalindromeUtils.reverseCheck(word));
+            System.out.println("Stack Technique   : " + PalindromeUtils.stackCheck(word));
+            System.out.println("Deque Technique   : " + PalindromeUtils.dequeCheck(word));
+            System.out.println("Recursive Method  : " + PalindromeUtils.recursiveCheck(word));
+
+            System.out.println("----------------------------------------");
+        }
+
+        testSentence();
+
+        runPerformanceTest();
+    }
+
+    private static void displayTitle() {
+
+        System.out.println("====================================");
+        System.out.println(" PALINDROME TESTING PROGRAM ");
+        System.out.println(" Version : 2.0 ");
+        System.out.println("====================================");
+    }
+
+    private static void testSentence() {
+
+        String text = "A man a plan a canal Panama";
+
+        String formatted =
+                text.replaceAll("[^a-zA-Z0-9]", "")
+                        .toLowerCase();
+
+        System.out.println("\nSentence Test");
+        System.out.println("Original  : " + text);
+        System.out.println("Processed : " + formatted);
+        System.out.println("Palindrome: " +
+                PalindromeUtils.twoPointer(formatted));
+    }
+
+    private static void runPerformanceTest() {
+
+        String test = "amanaplanacanalpanama";
+
+        long start = System.nanoTime();
+        boolean result = PalindromeUtils.twoPointer(test);
+        long end = System.nanoTime();
+
+        System.out.println("\nPerformance Test");
+        System.out.println("Input  : " + test);
+        System.out.println("Result : " + result);
+        System.out.println("Time   : " + (end - start) + " ns");
+    }
+}
+
+class PalindromeUtils {
+
+    public static boolean twoPointer(String text) {
+
+        int left = 0;
+        int right = text.length() - 1;
+
+        while (left < right) {
+
+            if (text.charAt(left) != text.charAt(right))
+                return false;
+
+            left++;
+            right--;
+        }
+
+        return true;
+    }
+
+    public static boolean reverseCheck(String text) {
+
+        StringBuilder builder = new StringBuilder(text);
+        String reversed = builder.reverse().toString();
+
+        return text.equals(reversed);
+    }
+
+    public static boolean stackCheck(String text) {
+
+        Stack<Character> stack = new Stack<>();
+
+        for (char ch : text.toCharArray())
+            stack.push(ch);
+
+        for (char ch : text.toCharArray()) {
+
+            if (ch != stack.pop())
+                return false;
+        }
+
+        return true;
+    }
+
+    public static boolean dequeCheck(String text) {
+
+        Deque<Character> deque = new ArrayDeque<>();
+
+        for (char c : text.toCharArray())
+            deque.add(c);
+
+        while (deque.size() > 1) {
+
+            if (!deque.pollFirst().equals(deque.pollLast()))
+                return false;
+        }
+
+        return true;
+    }
+
+    public static boolean recursiveCheck(String text) {
+
+        return recursiveHelper(text, 0, text.length() - 1);
+    }
+
+    private static boolean recursiveHelper(String text, int start, int end) {
+
+        if (start >= end)
+            return true;
+
+        if (text.charAt(start) != text.charAt(end))
+            return false;
+
+        return recursiveHelper(text, start + 1, end - 1);
+    }
+}
